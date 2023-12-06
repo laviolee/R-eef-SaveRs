@@ -9,9 +9,32 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Introduction
-##Methods
+
+# Coral Reef Health and Fish Occurrence Analysis Project
+
+## Introduction
+[Provide a brief overview of the project, its objectives, and its significance]
+
+## Objectives
+- Objective 1: [Detail the primary objective of your project]
+- Objective 2: [Detail the secondary objective of your project, if any]
+
+## Methodology
+Briefly describe the methodology used in this project, including data sources and analysis techniques.
+
+### Data Sources
+- Coral Reef Health Data: [Describe the source and nature of the coral reef health data]
+- Fish Occurrence Data: Using the `rgbif` package to access data from GBIF.
+
+### Data Retrieval and Processing
+#### Using `rgbif` for Fish Occurrence Data
+- **Installation**: 
+  ```R
+  install.packages("rgbif")
+  library(rgbif) 
+  ``` 
 ##Results
 ##Discussion
+  
 ##Author Contributions
 ##References
