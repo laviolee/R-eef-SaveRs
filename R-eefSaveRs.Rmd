@@ -39,7 +39,7 @@ Briefly describe the methodology used in this project, including data sources an
 ### Data Retrieval and Processing
 #### Using `rgbif` for Fish Occurrence Data
 ```{r querying GBIFs API, echo=FALSE, cache = TRUE}
-species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", "Abudefduf vaigiensis","")
+species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", "Abudefduf vaigiensis","Chlorurus sordidus")
 year <- paste0("2000",",","2017")
 
 data.l <- list() #making empty list to store data
