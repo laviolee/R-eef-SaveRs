@@ -1,0 +1,50 @@
+---
+title: "Coral Reef Health and Fish Occurrence Analysis Project"
+author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer,& Katie Miller,"
+date: "2023-12-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rgbif)
+library(tidyverse)
+library(MuMIn)
+library(rnoaa)
+library(data.table)
+library(ggmap)
+library(usmap)
+library(sf)
+library(magick)
+library(cowplot)
+library(lme4)
+library(car)
+```
+
+## Introduction
+[Provide a brief overview of the project, its objectives, and its significance]
+
+## Objectives
+- Objective 1: [Detail the primary objective of your project]
+- Objective 2: [Detail the secondary objective of your project, if any]
+
+## Methodology
+Briefly describe the methodology used in this project, including data sources and analysis techniques.
+
+### Data Sources
+- Coral Reef Health Data: [Describe the source and nature of the coral reef health data]
+- Fish Occurrence Data: Using the `rgbif` package to access data from GBIF.
+
+### Data Retrieval and Processing
+#### Using `rgbif` for Fish Occurrence Data
+```{r querying GBIFs API, echo=FALSE, cache = TRUE}
+species <- c("", "", "", "","")
+year <- paste0("2000",",","2022")
+
+data.l <- list() #making empty list to store data
+
+##Results
+
+##Discussion
+##Author Contributions
+##References
