@@ -3,6 +3,7 @@ title: "Coral Reef Health and Fish Occurrence Analysis Project"
 author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer,& Katie Miller,"
 date: "2023-12-06"
 output: html_document
+bibliography: BIOL3140.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -42,6 +43,10 @@ species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", "Abud
 year <- paste0("2000",",","2022")
 
 data.l <- list() #making empty list to store data
+```
+
+```{r coral bleaching data, echo=FALSE, cache = TRUE}}
+bleachingdata <- read_csv("bleachingdatabase.csv")
 ```
 
 ##Results
