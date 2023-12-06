@@ -45,8 +45,10 @@ year <- paste0("2000",",","2022")
 data.l <- list() #making empty list to store data
 ```
 
-```{r coral bleaching data, echo=FALSE, cache = TRUE}}
+
+```{r coral bleaching data, echo=FALSE, cache = TRUE}
 bleachingdata <- read_csv("bleachingdatabase.csv")
+head(bleachingdata)
 ```
 
 ##Results
