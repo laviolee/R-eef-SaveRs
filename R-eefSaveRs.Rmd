@@ -20,6 +20,10 @@ library(magick)
 library(cowplot)
 library(lme4)
 library(car)
+library(dplyr)
+library(purrr)
+library(leaflet)
+library(ggplot2)
 ```
 
 ## Introduction
@@ -54,9 +58,6 @@ data_list <- list()
 for (sp in species) {
   data_list[[sp]] <- occ_search(scientificName = sp, country = "AU", year = year_range, limit = 300)
 }
-
-library(dplyr)
-library(purrr)
 
 # Process each data frame to select specific columns and add a species column, handle NULL values
 processed_data_list <- map(data_list, ~ {
@@ -143,10 +144,6 @@ new_zone_counts <- reef_data %>%
 
 
 ```{r visualizing, include=TRUE}
-library(ggplot2)
-library(dplyr)
-library(leaflet)
-
 # Create a leaflet map and add tiles
 reef_map <- leaflet() %>% 
   addTiles() %>%  # This adds the default OpenStreetMap tiles
@@ -179,8 +176,6 @@ severity_code_range <- reef_data %>%
 # View the resulting tibble
 print(severity_code_range)
 
-library(ggplot2)
-
 # Plotting the range of severity codes for each year
 ggplot(severity_code_range, aes(x = YEAR)) +
   geom_bar(aes(y = max_severity), stat = "identity", position = "dodge", fill = "steelblue") +
@@ -192,8 +187,6 @@ ggplot(severity_code_range, aes(x = YEAR)) +
        fill = "Severity") +
   scale_fill_manual(values = c("Max Severity" = "steelblue", "Min Severity" = "firebrick")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
-
-
 
 ```
 
@@ -223,8 +216,6 @@ species_observations_per_zone_year <- combined_data %>%
 ```
 
 ```{r plots, include=TRUE}
-library(ggplot2)
-
 # Plot observation_count vs. year for each species, facetted by species
 ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, group = reef_zone, color = reef_zone)) +
   geom_line() + 
@@ -236,8 +227,6 @@ ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, 
        y = "Observation Count",
        color = "Reef Zone") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis labels for better readability
-
-
 
 ```
 
