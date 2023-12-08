@@ -157,15 +157,46 @@ reef_map <- reef_map %>%
   addCircleMarkers(data = reef_data, 
                    ~LONGITUDE, 
                    ~LATITUDE, 
-                   color = ~case_when(reef_zone == "A" ~ "red",
-                                      reef_zone == "B" ~ "blue",
-                                      reef_zone == "C" ~ "green"),
+                   color = ~case_when(reef_zone == "A" ~ "green",
+                                      reef_zone == "B" ~ "orange",
+                                      reef_zone == "C" ~ "red"),
                    popup = ~paste("Zone:", reef_zone))
 
 # Print the map
 reef_map
 
 ```
+
+```{r severity, include=TRUE}
+# Calculate the range of SEVERITY_CODE values for each year
+severity_code_range <- reef_data %>%
+  group_by(YEAR) %>%
+  summarise(
+    min_severity = min(SEVERITY_CODE, na.rm = TRUE),
+    max_severity = max(SEVERITY_CODE, na.rm = TRUE)
+  )
+
+# View the resulting tibble
+print(severity_code_range)
+
+library(ggplot2)
+
+# Plotting the range of severity codes for each year
+ggplot(severity_code_range, aes(x = YEAR)) +
+  geom_bar(aes(y = max_severity), stat = "identity", position = "dodge", fill = "steelblue") +
+  geom_bar(aes(y = min_severity), stat = "identity", position = "dodge", fill = "firebrick") +
+  theme_minimal() +
+  labs(title = "Range of Severity Codes Over the Years",
+       x = "Year",
+       y = "Severity Code",
+       fill = "Severity") +
+  scale_fill_manual(values = c("Max Severity" = "steelblue", "Min Severity" = "firebrick")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+
+
+
+```
+
 
 ```{r zoning species, include=TRUE}
 # Assuming zone_boundary_1 and zone_boundary_2 are already defined
@@ -208,6 +239,23 @@ ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, 
 
 
 
+```
+
+```{r plot 2, include=TRUE}
+# Plot observation_count vs. year, separated by reef_zone
+ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, color = species)) +
+  geom_line(aes(group = species)) + 
+  geom_point(aes(shape = species)) +  # Add points to the lines
+  facet_grid(. ~ reef_zone) +  # Create a separate graph for each reef zone
+  theme_minimal() + 
+  labs(title = "Observation Count vs. Year by Reef Zone",
+       x = "Year",
+       y = "Observation Count",
+       color = "Species",
+       shape = "Species") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),  # Rotate x-axis labels for better readability
+        legend.position = "bottom") +  # Move legend to bottom
+  guides(color = guide_legend(override.aes = list(shape = NA)))  # Remove shapes from color legend
 ```
 
 ```{r merging, include=TRUE}
