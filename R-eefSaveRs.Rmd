@@ -51,6 +51,82 @@ bleachingdata <- read_csv("bleachingdatabase.csv")
 head(bleachingdata)
 ```
 
+```{r modbleach, include=TRUE}
+filtered_data <- bleachingdata %>%
+  select(LATITUDE, LONGITUDE, YEAR, SEVERITY_CODE, LOCATION) %>%
+  filter(complete.cases(.))
+```
+
+```{r reef stuff, include=TRUE}
+
+# Define the latitude and longitude boundaries of the Great Barrier Reef
+lat_min <- -24   # Southernmost latitude
+lat_max <- -10   # Northernmost latitude
+long_min <- 142  # Westernmost longitude
+long_max <- 154  # Easternmost longitude
+
+# Add the within_reef column
+filtered_data <- filtered_data %>%
+  mutate(within_reef = LATITUDE >= lat_min & LATITUDE <= lat_max & 
+                        LONGITUDE >= long_min & LONGITUDE <= long_max)
+
+
+# Group by the within_reef column and count the number of TRUE and FALSE values
+reef_count <- filtered_data %>%
+  group_by(within_reef) %>%
+  summarise(count = n())
+
+# The reef_count tibble now contains the count of TRUE and FALSE values in the within_reef column.
+
+reef_data <- filtered_data %>%
+  filter(within_reef == TRUE)
+
+```
+
+```{r zone grouping, include=TRUE}
+# Determine new latitude boundaries for each zone based on quantiles
+zone_boundary_1 <- quantile(reef_data$LATITUDE, probs = 1/3)
+zone_boundary_2 <- quantile(reef_data$LATITUDE, probs = 2/3)
+
+# Re-assign the reef_zone column
+reef_data <- reef_data %>%
+  mutate(reef_zone = case_when(
+    LATITUDE <= zone_boundary_1 ~ "A",
+    LATITUDE > zone_boundary_1 & LATITUDE <= zone_boundary_2 ~ "B",
+    TRUE ~ "C"
+  ))
+
+# Check the new distribution
+new_zone_counts <- reef_data %>%
+  count(reef_zone)
+
+```
+
+
+```{r visualizing, include=TRUE}
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+
+# Define the bounding box for the Great Barrier Reef area
+bounding_box <- c(left = 142, bottom = -24, right = 154, top = -10)
+
+# Get the map
+reef_map <- get_stamenmap(bbox = bounding_box, zoom = 6, maptype = "terrain")
+
+ggmap(reef_map) +
+  geom_point(data = reef_data, aes(x = LONGITUDE, y = LATITUDE, color = reef_zone), alpha = 0.7, size = 2) +
+  scale_color_manual(values = c("A" = "red", "B" = "blue", "C" = "green")) +
+  ggtitle("Great Barrier Reef Zones") +
+  theme_minimal()
+
+
+
+
+```
+
+
+
 ##Results
 
 ##Discussion
