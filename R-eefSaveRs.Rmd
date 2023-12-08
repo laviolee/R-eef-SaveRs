@@ -42,7 +42,8 @@ Briefly describe the methodology used in this project, including data sources an
 
 ### Data Retrieval and Processing
 #### Using `rgbif` for Fish Occurrence Data
-```{r querying GBIFs API, echo=FALSE, cache = TRUE}
+```{r querying GBIFs API, echo=FALSE, cache = TRUE, eval=FALSE}
+
 # Species list
 species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", 
              "Abudefduf vaigiensis", "Chlorurus undulatus", "Cephalopholis miniata", 
@@ -56,39 +57,52 @@ data_list <- list()
 
 # Loop over the species list and retrieve data for each species
 for (sp in species) {
-  data_list[[sp]] <- occ_search(scientificName = sp, country = "AU", year = year_range, limit = 300)
+  data_list[[sp]] <- occ_search(scientificName = sp, country = "AU", year = year_range, limit = 25000)
 }
 
-# Process each data frame to select specific columns and add a species column, handle NULL values
-processed_data_list <- map(data_list, ~ {
-  if (is.null(.x$data)) {
-    return(NULL)
-  } else {
-    .x$data %>%
-      select(species = scientificName, 
-             decimalLatitude, 
-             decimalLongitude, 
-             year, 
-             speciesKey, 
-             dateIdentified, 
-             coordinateUncertaintyInMeters)
-  }
-})
+```
 
-# Remove NULL elements
-processed_data_list <- processed_data_list[!sapply(processed_data_list, is.null)]
+```{r data rds, include=TRUE}
+saveRDS(data_list, file = "data_list.rds")
+data_list <- readRDS(file = "data_list.rds")
 
-# Combine all the data frames into one tibble
-combined_data <- bind_rows(processed_data_list)
+```
 
+```{r combined data, include=TRUE}
+# Directly combine all the data frames into one tibble without filtering NULL values
+combined_data <- bind_rows(lapply(data_list, `[[`, "data"))
+
+# Count the number of observations for each species
 species_counts <- combined_data %>%
   count(species)
+
+# Calculate the minimum and maximum years in combined_data
+year_range_check_CD <- combined_data %>%
+  group_by(species) %>% 
+  summarise(
+    min_year = min(year, na.rm = TRUE),
+    max_year = max(year, na.rm = TRUE)
+  )
+
+# View the resulting tibble
+print(year_range_check_CD)
+
 ```
 
 
 ```{r coral bleaching data, echo=FALSE, cache = TRUE}
 bleachingdata <- read_csv("bleachingdatabase.csv")
 head(bleachingdata)
+
+# Calculate the minimum and maximum years in reef_data
+year_range_check <- bleachingdata %>%
+  summarise(
+    min_year = min(YEAR, na.rm = TRUE),
+    max_year = max(YEAR, na.rm = TRUE)
+  )
+
+# View the resulting tibble
+print(year_range_check)
 ```
 
 ```{r modbleach, include=TRUE}
@@ -140,6 +154,8 @@ reef_data <- reef_data %>%
 new_zone_counts <- reef_data %>%
   count(reef_zone)
 
+
+
 ```
 
 
@@ -165,27 +181,26 @@ reef_map
 ```
 
 ```{r severity, include=TRUE}
-# Calculate the range of SEVERITY_CODE values for each year
-severity_code_range <- reef_data %>%
-  group_by(YEAR) %>%
+library(dplyr)
+library(ggplot2)
+
+# Calculate the average SEVERITY_CODE values for each year and each reef_zone
+severity_code_by_year_zone <- reef_data %>%
+  group_by(YEAR, reef_zone) %>%
   summarise(
-    min_severity = min(SEVERITY_CODE, na.rm = TRUE),
-    max_severity = max(SEVERITY_CODE, na.rm = TRUE)
+    avg_severity = mean(SEVERITY_CODE, na.rm = TRUE),
+    .groups = "drop"
   )
 
-# View the resulting tibble
-print(severity_code_range)
-
-# Plotting the range of severity codes for each year
-ggplot(severity_code_range, aes(x = YEAR)) +
-  geom_bar(aes(y = max_severity), stat = "identity", position = "dodge", fill = "steelblue") +
-  geom_bar(aes(y = min_severity), stat = "identity", position = "dodge", fill = "firebrick") +
+# Plotting the average severity codes for each year, separated by reef_zone
+ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_severity, group = reef_zone, color = reef_zone)) +
+  geom_line() +  # Add line to connect the dots
+  geom_point() +  # Add points for each data point
+  facet_wrap(~ reef_zone, scales = "free_y") +  # Separate graph for each reef_zone
   theme_minimal() +
-  labs(title = "Range of Severity Codes Over the Years",
+  labs(title = "Average Severity Codes Over the Years by Reef Zone",
        x = "Year",
-       y = "Severity Code",
-       fill = "Severity") +
-  scale_fill_manual(values = c("Max Severity" = "steelblue", "Min Severity" = "firebrick")) +
+       y = "Average Severity Code") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
 
 ```
@@ -204,6 +219,8 @@ combined_data <- combined_data %>%
   ))
 
 # Now, combined_data contains the new column reef_zone with values A, B, or C
+
+
 ```
 
 ```{r count, include=TRUE}
