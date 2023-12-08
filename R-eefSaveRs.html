@@ -4605,11 +4605,6 @@ ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, 
 
 joined_data &lt;- combined_data %&gt;%
   left_join(reef_data, by = &quot;reef_zone&quot;)</code></pre>
-<pre><code>## Warning in left_join(., reef_data, by = &quot;reef_zone&quot;): Detected an unexpected many-to-many relationship between `x` and `y`.
-## ℹ Row 1 of `x` matches multiple rows in `y`.
-## ℹ Row 8 of `y` matches multiple rows in `x`.
-## ℹ If a many-to-many relationship is expected, set `relationship =
-##   &quot;many-to-many&quot;` to silence this warning.</code></pre>
 <p>##Results</p>
 <p>##Discussion</p>
 <p>##Author Contributions</p>

@@ -258,7 +258,7 @@ ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, 
   guides(color = guide_legend(override.aes = list(shape = NA)))  # Remove shapes from color legend
 ```
 
-```{r merging, include=TRUE}
+```{r merging, eval=FALSE, include=TRUE}
 ### HOLD OFF ON THIS ####
 
 joined_data <- combined_data %>%
