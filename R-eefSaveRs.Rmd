@@ -213,7 +213,8 @@ ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, 
 ```{r merging, include=TRUE}
 ### HOLD OFF ON THIS ####
 
-
+joined_data <- combined_data %>%
+  left_join(reef_data, by = "reef_zone")
 
 ```
 
