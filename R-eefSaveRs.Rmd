@@ -61,7 +61,7 @@ filtered_data <- bleachingdata %>%
 
 # Define the latitude and longitude boundaries of the Great Barrier Reef
 lat_min <- -24   # Southernmost latitude
-lat_max <- -10   # Northernmost latitude
+lat_max <- -11   # Northernmost latitude
 long_min <- 142  # Westernmost longitude
 long_max <- 154  # Easternmost longitude
 
@@ -105,23 +105,26 @@ new_zone_counts <- reef_data %>%
 
 ```{r visualizing, include=TRUE}
 library(ggplot2)
-library(ggmap)
 library(dplyr)
+library(leaflet)
 
-# Define the bounding box for the Great Barrier Reef area
-bounding_box <- c(left = 142, bottom = -24, right = 154, top = -10)
+# Create a leaflet map and add tiles
+reef_map <- leaflet() %>% 
+  addTiles() %>%  # This adds the default OpenStreetMap tiles
+  setView(lng = mean(c(142, 154)), lat = mean(c(-24, -10)), zoom = 6)
 
-# Get the map
-reef_map <- get_stamenmap(bbox = bounding_box, zoom = 6, maptype = "terrain")
+# Add points to the map
+reef_map <- reef_map %>% 
+  addCircleMarkers(data = reef_data, 
+                   ~LONGITUDE, 
+                   ~LATITUDE, 
+                   color = ~case_when(reef_zone == "A" ~ "red",
+                                      reef_zone == "B" ~ "blue",
+                                      reef_zone == "C" ~ "green"),
+                   popup = ~paste("Zone:", reef_zone))
 
-ggmap(reef_map) +
-  geom_point(data = reef_data, aes(x = LONGITUDE, y = LATITUDE, color = reef_zone), alpha = 0.7, size = 2) +
-  scale_color_manual(values = c("A" = "red", "B" = "blue", "C" = "green")) +
-  ggtitle("Great Barrier Reef Zones") +
-  theme_minimal()
-
-
-
+# Print the map
+reef_map
 
 ```
 
