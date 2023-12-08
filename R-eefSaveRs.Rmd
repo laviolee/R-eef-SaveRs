@@ -39,10 +39,49 @@ Briefly describe the methodology used in this project, including data sources an
 ### Data Retrieval and Processing
 #### Using `rgbif` for Fish Occurrence Data
 ```{r querying GBIFs API, echo=FALSE, cache = TRUE}
-species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", "Abudefduf vaigiensis","Chlorurus sordidus")
-year <- paste0("2000",",","2017")
+# Species list
+species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", 
+             "Abudefduf vaigiensis", "Chlorurus undulatus", "Cephalopholis miniata", 
+             "Chlorurus sordidus")
 
-data.l <- list() #making empty list to store data
+# Time range
+year_range <- "2000,2023"
+
+# Create an empty list to store the data
+data_list <- list()
+
+# Loop over the species list and retrieve data for each species
+for (sp in species) {
+  data_list[[sp]] <- occ_search(scientificName = sp, country = "AU", year = year_range, limit = 300)
+}
+
+library(dplyr)
+library(purrr)
+
+# Process each data frame to select specific columns and add a species column, handle NULL values
+processed_data_list <- map(data_list, ~ {
+  if (is.null(.x$data)) {
+    return(NULL)
+  } else {
+    .x$data %>%
+      select(species = scientificName, 
+             decimalLatitude, 
+             decimalLongitude, 
+             year, 
+             speciesKey, 
+             dateIdentified, 
+             coordinateUncertaintyInMeters)
+  }
+})
+
+# Remove NULL elements
+processed_data_list <- processed_data_list[!sapply(processed_data_list, is.null)]
+
+# Combine all the data frames into one tibble
+combined_data <- bind_rows(processed_data_list)
+
+species_counts <- combined_data %>%
+  count(species)
 ```
 
 
@@ -128,7 +167,55 @@ reef_map
 
 ```
 
+```{r zoning species, include=TRUE}
+# Assuming zone_boundary_1 and zone_boundary_2 are already defined
+# and combined_data has decimalLatitude and decimalLongitude columns
 
+# Add the reef_zone column to combined_data
+combined_data <- combined_data %>%
+  mutate(reef_zone = case_when(
+    decimalLatitude <= zone_boundary_1 ~ "A",
+    decimalLatitude > zone_boundary_1 & decimalLatitude <= zone_boundary_2 ~ "B",
+    decimalLatitude > zone_boundary_2 ~ "C"
+  ))
+
+# Now, combined_data contains the new column reef_zone with values A, B, or C
+```
+
+```{r count, include=TRUE}
+# Count the number of unique species in each reef zone
+species_observations_per_zone_year <- combined_data %>%
+  filter(!is.na(reef_zone)) %>%
+  group_by(reef_zone, species, year) %>%
+  summarise(observation_count = n(), .groups = "drop")
+
+```
+
+```{r plots, include=TRUE}
+library(ggplot2)
+
+# Plot observation_count vs. year for each species, facetted by species
+ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, group = reef_zone, color = reef_zone)) +
+  geom_line() + 
+  geom_point() +  # Add points to the lines
+  facet_wrap(~ species, scales = "free_y") +  # Facet by species, with free y scales for each plot
+  theme_minimal() + 
+  labs(title = "Observation Count vs. Year for Each Species by Reef Zone",
+       x = "Year",
+       y = "Observation Count",
+       color = "Reef Zone") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis labels for better readability
+
+
+
+```
+
+```{r merging, include=TRUE}
+### HOLD OFF ON THIS ####
+
+
+
+```
 
 ##Results
 
