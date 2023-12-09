@@ -27,14 +27,18 @@ library(ggplot2)
 ```
 
 ## Introduction
-[Provide a brief overview of the project, its objectives, and its significance]
+The "Coral Reef Health and Organismal Occurrence Analysis Project" is a comprehensive study undertaken to understand the impact of environmental conditions on coral reef ecosystems and the distribution of various marine species. Led by Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer, and Katie Miller, this project focuses on analyzing coral reef health data and fish occurrence data from 1980 to 2023, with a particular emphasis on the Great Barrier Reef. The study aims to shed light on the ecological dynamics within these complex marine ecosystems, providing insights that are crucial for effective conservation and management strategies.
 
 ## Objectives
-- Objective 1: [Detail the primary objective of your project]
-- Objective 2: [Detail the secondary objective of your project, if any]
+- Primary Objective: To analyze the relationship between environmental severity, as indicated by coral bleaching events, and the occurrence of key marine species in the Great Barrier Reef.
+- Secondary Objective: To understand the spatial distribution of these impacts across different zones within the reef and over various time periods.
 
 ## Methodology
-Briefly describe the methodology used in this project, including data sources and analysis techniques.
+- Coral Reef Health Data: Sourced from comprehensive databases, this data includes information on coral bleaching events, severity codes, and geographical locations within the reef.
+- Fish Occurrence Data: Accessed using the rgbif package, this data represents observations of various marine species within Australian waters, focusing on the Great Barrier Reef.
+Data Processing
+- The data was filtered, processed, and categorized into different time ranges (1980-1990, 1991-2000, 2001-2010).
+- Observation counts for each species were tallied, and the data was mapped to visualize the distribution of severity codes and species occurrence.
 
 ### Data Sources
 - Coral Reef Health Data: [Describe the source and nature of the coral reef health data]
@@ -442,10 +446,19 @@ ggplot(new_data, aes(x = SEVERITY_CODE, y = predicted_count, color = species)) +
 ```
 
 
-##Results
+## Results
+The analysis revealed varied relationships between observation counts and severity codes across different species, indicating species-specific responses to environmental changes.
+Significant differences in observation counts were observed across various reef zones, highlighting spatial heterogeneity within the reef ecosystem.
+Maps generated for different decades showed the distribution of severity codes, providing a visual representation of coral bleaching impact over time.
 
-##Discussion
+## Discussion
+The findings of this project illustrate the intricate interplay between environmental severity and marine biodiversity. The differential impact on various species underscores the complexity of coral reef ecosystems and the need for tailored conservation approaches. The spatial analysis across different reef zones emphasizes the importance of considering geographical variability in reef health. Overall, this study contributes valuable insights into the resilience and vulnerability of coral reefs, informing future conservation efforts.
 
-##Author Contributions
+## Author Contributions
+Jonah: 
+Elisabeth: 
+Elizabeth:
+Lauren:
+Katie: 
 
 ##References
