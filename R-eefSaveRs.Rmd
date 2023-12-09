@@ -180,6 +180,58 @@ reef_map
 ```
 
 ```{r severity, include=TRUE}
+library(leaflet)
+
+# Splitting the data into the new time ranges
+data_1980_1990 <- reef_data[reef_data$YEAR >= 1980 & reef_data$YEAR <= 1990, ]
+data_1991_2000 <- reef_data[reef_data$YEAR >= 1991 & reef_data$YEAR <= 2000, ]
+data_2001_2010 <- reef_data[reef_data$YEAR >= 2001 & reef_data$YEAR <= 2010, ]
+
+# Function to create a map for a given dataset
+create_map <- function(data, title) {
+  if (nrow(data) > 0) {
+    leaflet(data) %>% 
+      addTiles() %>%
+      setView(lng = mean(c(142, 154)), lat = mean(c(-24, -10)), zoom = 6) %>%
+      addCircleMarkers(~LONGITUDE, ~LATITUDE, 
+                       color = ~case_when(
+                         SEVERITY_CODE >= 3 ~ "red",     # Most severe
+                         SEVERITY_CODE >= 2 ~ "orange",  # Moderately severe
+                         TRUE ~ "green"                  # Least severe
+                       ),
+                       popup = ~paste("Severity Code:", SEVERITY_CODE)) %>%
+      addTiles() %>%
+      addMarkers(lng = mean(c(142, 154)), lat = mean(c(-24, -10)), popup = title)
+  } else {
+    print(paste("No data available for", title))
+  }
+}
+
+# Creating and printing the maps
+map_1980_1990 <- create_map(data_1980_1990, "1980-1990 Severity Codes")
+map_1991_2000 <- create_map(data_1991_2000, "1991-2000 Severity Codes")
+map_2001_2010 <- create_map(data_2001_2010, "2001-2010 Severity Codes")
+```
+
+# Maps of Zones A, B, and C based on Severity (Green = Least Severe and Red = Most Severe)
+
+## Severity (1980-1990)
+```{r map1, include=TRUE}
+map_1980_1990
+```
+
+## Severity (1991-2000)
+```{r map2, include=TRUE}
+map_1991_2000
+```
+
+## Severity (2001-2010)
+```{r map13, include=TRUE}
+map_2001_2010
+```
+
+
+```{r severity2, include=TRUE}
 library(dplyr)
 library(ggplot2)
 
