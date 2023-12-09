@@ -351,7 +351,7 @@ model <- lmer(observation_count ~ SEVERITY_CODE + species + (1 | reef_zone), dat
 summary(model)
 
 
-````
+```
 
 ### interpretation
 The model, represented by the formula observation_count ~ SEVERITY_CODE + species + (1 | reef_zone), demonstrates a significant overall negative relationship between severity codes and observation counts, as indicated by the SEVERITY_CODE coefficient of -1.6958. This suggests that an increase in severity code, indicative of more severe environmental conditions, generally leads to a decrease in observation counts across all species. The model's intercept is set at 8.1568, serving as a baseline for observation counts when other variables are held constant.
