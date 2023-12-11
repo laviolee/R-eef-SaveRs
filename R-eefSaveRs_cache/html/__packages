@@ -22,3 +22,5 @@ lme4
 carData
 car
 leaflet
+shiny
+GGally

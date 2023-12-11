@@ -4,6 +4,7 @@ author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer 
 date: "2023-12-06"
 output: html_document
 bibliography: BIOL3140.bib
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -24,6 +25,7 @@ library(dplyr)
 library(purrr)
 library(leaflet)
 library(ggplot2)
+library(GGally)
 ```
 
 ## Introduction
@@ -46,7 +48,7 @@ Data Processing
 
 ### Data Retrieval and Processing
 #### Using `rgbif` for Fish Occurrence Data
-```{r querying GBIFs API, echo=FALSE, cache = TRUE, eval=FALSE}
+```{r querying GBIFs API, echo=FALSE, cache = TRUE, eval=FALSE, include=TRUE}
 
 # Species list
 species <- c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", 
@@ -307,20 +309,37 @@ ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, 
 ```
 
 ```{r plot 2, include=TRUE}
-# Plot observation_count vs. year, separated by reef_zone
-ggplot(species_observations_per_zone_year, aes(x = year, y = observation_count, color = species)) +
+#----Ratio----#
+
+# Calculate the max observation count for each species
+species_max <- species_observations_per_zone_year %>%
+  group_by(species) %>%
+  summarise(max_observation = max(observation_count, na.rm = TRUE))
+
+# Join this with your original data to get the max observation for each row
+species_observations_per_zone_year <- species_observations_per_zone_year %>%
+  left_join(species_max, by = "species")
+
+# Calculate the ratio
+species_observations_per_zone_year <- species_observations_per_zone_year %>%
+  mutate(observation_ratio = observation_count / max_observation)
+
+
+# Plotting the ratio of observation count to max observation count
+ggplot(species_observations_per_zone_year, aes(x = year, y = observation_ratio, color = species)) +
   geom_line(aes(group = species)) + 
-  geom_point(aes(shape = species)) +  # Add points to the lines
-  facet_grid(. ~ reef_zone) +  # Create a separate graph for each reef zone
+  geom_point(aes(shape = species)) +
+  facet_grid(. ~ reef_zone) +
   theme_minimal() + 
-  labs(title = "Observation Count vs. Year by Reef Zone",
+  labs(title = "Observation Count Ratio vs. Year by Reef Zone",
        x = "Year",
-       y = "Observation Count",
+       y = "Observation Count Ratio",
        color = "Species",
        shape = "Species") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),  # Rotate x-axis labels for better readability
-        legend.position = "bottom") +  # Move legend to bottom
-  guides(color = guide_legend(override.aes = list(shape = NA)))  # Remove shapes from color legend
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        legend.position = "bottom") +
+  guides(color = guide_legend(override.aes = list(shape = NA)))
+
 ```
 
 
@@ -389,6 +408,7 @@ for (sp in unique_species) {
     cat("\nModel for Species:", sp, "\n")
     print(summary(models[[sp]]))
 }
+
 
 
 ```
@@ -462,3 +482,132 @@ Lauren:
 Katie: 
 
 ##References
+
+
+# More Visuals
+
+## Time Series
+```{r vis1, include=TRUE}
+# Time-Series Analysis of Observation Count
+ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_severity)) +
+  geom_line() +
+  facet_wrap(~reef_zone) +
+  labs(title = "Time-Series Analysis of Average Severity Code by Year and Reef Zone",
+       x = "Year", y = "Average Severity Code") +
+  theme_minimal()
+
+```
+
+
+## Heatmaps
+```{r vis2, include=TRUE}
+# Assuming the observation_ratio column already exists in species_observations_per_zone_year
+ggplot(species_observations_per_zone_year, aes(x = year, y = species, fill = observation_ratio)) +
+  geom_tile() +
+  scale_fill_gradient(low = "blue", high = "red") +
+  labs(title = "Heatmap of Species Observation Count Ratio by Year",
+       x = "Year", y = "Species") +
+  theme_minimal()
+
+
+```
+
+
+## Interactive Dashboards with Shiny
+
+```{r vis3, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Coral Reef Analysis Dashboard"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("species", "Choose a Species:", choices = unique(species_observations_per_zone_year$species)),
+      sliderInput("yearRange", "Select Year Range:", 
+                  min = min(species_observations_per_zone_year$year), 
+                  max = max(species_observations_per_zone_year$year),
+                  value = c(min(species_observations_per_zone_year$year), max(species_observations_per_zone_year$year)))
+    ),
+    mainPanel(plotOutput("plot"))
+  )
+)
+
+server <- function(input, output) {
+  output$plot <- renderPlot({
+    filtered_data <- species_observations_per_zone_year %>%
+      filter(species == input$species, year >= input$yearRange[1], year <= input$yearRange[2])
+    ggplot(filtered_data, aes(x = year, y = observation_count)) +
+      geom_line() +
+      labs(title = paste("Observations of", input$species),
+           x = "Year", y = "Observation Count")
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
+```
+
+## Biodiversity Indices
+
+```{r vis4, include=TRUE}
+# Calculate Shannon Diversity Index
+shannon_diversity <- species_observations_per_zone_year %>%
+  group_by(reef_zone, year) %>%
+  summarise(diversity = -sum((observation_count / sum(observation_count)) * log(observation_count / sum(observation_count))))
+
+# Plotting Shannon Diversity Index
+ggplot(shannon_diversity, aes(x = year, y = diversity, color = reef_zone)) +
+  geom_line() +
+  labs(title = "Shannon Diversity Index Over Years by Reef Zone",
+       x = "Year", y = "Diversity Index") +
+  theme_minimal()
+
+```
+
+## Comparative Bar Charts
+
+```{r vis5, include=TRUE}
+
+p <- ggplot(species_observations_per_zone_year, aes(x = species, y = observation_ratio, fill = factor(year))) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  labs(title = "Comparative Ratio of Observation Counts by Species and Year",
+       x = "Species", y = "Observation Count Ratio")
+
+p
+
+```
+
+## Multivariate Analysis (PCA)
+
+```{r vis6, include=TRUE}
+
+# Assuming species_observations_per_zone_year has numeric variables that we can perform PCA on
+# If your data has non-numeric columns, select only numeric ones for PCA
+
+# Conduct PCA
+pca_result <- prcomp(species_observations_per_zone_year[, sapply(species_observations_per_zone_year, is.numeric)], center = TRUE, scale. = TRUE)
+
+# Extract PCA scores
+pca_scores <- as.data.frame(pca_result$x)
+
+# Add species information back to the PCA scores for coloring
+# Make sure that the row order of species_observations_per_zone_year hasn't changed since the PCA was done
+pca_scores$species <- species_observations_per_zone_year$species
+
+# Plotting PCA results using ggplot2
+ggplot(pca_scores, aes(x = PC1, y = PC2, color = species)) +
+  geom_point() +
+  labs(title = "PCA of Species Observations",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal() +
+  scale_color_viridis_d()
+
+
+```
+
+## Interpretation of PCA
+In this analysis, PC1 and PC2 together form a plane where species are plotted, revealing clustering and potential outliers. PC1 appears to be influenced heavily by the maximum observation counts, suggesting that species with higher overall observations are spread along this axis. PC2 is most impacted by the observation ratio, indicating that this component captures the relative frequency of observations per species. The clusters observed may represent groups of species with similar observation profiles, possibly linked to their ecological characteristics or response to environmental pressures. Outliers could signify species with unique or extreme observation records. The dispersion of points across the two principal components underscores the multifaceted nature of species distribution and abundance, reflecting the complexity of ecological interactions within the coral reef ecosystem. This PCA thus provides a foundational understanding of the data structure, guiding further, more nuanced analyses.
