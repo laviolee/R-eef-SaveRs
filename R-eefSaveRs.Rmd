@@ -94,12 +94,40 @@ year_range_check_CD <- combined_data %>%
 # View the resulting tibble
 print(year_range_check_CD)
 
+# Creating a data frame with scientific and common names of species, and their image URLs
+species_info <- data.frame(
+  scientific_name = c("Triaenodon obesus", "Tridacna gigas", "Chaetodon rainfordi", 
+                      "Abudefduf vaigiensis", "Cephalopholis miniata", "Chlorurus sordidus"),
+  common_name = c("Whitetip Reef Shark", "Giant Clam", "Rainford's Butterflyfish", 
+                  "Indo-Pacific Sergeant", "Coral Hind", "Bullethead Parrotfish"))
+
 ```
 
-## Species Included in this Study
+# Species Included in this Study
 ```{r spec, include=TRUE}
-print(unique(combined_data$species))
+print(species_info)
 ```
+
+### Triaenodon obesus (Whitetip Reef Shark)
+![Whitetip Reef Shark](https://www.aquariumofpacific.org/images/olc/nwhi-sharknoaac.jpg)
+
+### Tridacna gigas (Giant Clam)
+![Giant Clam](https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Giant_clam_or_Tridacna_gigas.jpg/520px-Giant_clam_or_Tridacna_gigas.jpg)
+
+### Chaetodon rainfordi (Rainford's Butterflyfish)
+![Rainford's Butterflyfish](https://upload.wikimedia.org/wikipedia/commons/f/f6/ChaetodRainfordiMarkMShepherd.jpg)
+
+### Abudefduf vaigiensis (Indo-Pacific Sergeant)
+![Indo-Pacific Sergeant](https://media.australian.museum/media/dd/images/avaigiensis_big.6e7311e.width-1200.067fecd.jpg)
+
+### Cephalopholis miniata (Coral Hind)
+![Coral Hind](https://seaunseen.com/wp-content/uploads/2016/02/MG_8098.jpg)
+
+
+### Chlorurus sordidus (Bullethead Parrotfish)
+![Bullethead Parrotfish](https://upload.wikimedia.org/wikipedia/commons/2/26/Chlorurus_sordidus_by_Jaroslaw_Barski.jpg)
+
+
 
 ```{r coral bleaching data, echo=FALSE, cache = TRUE, include=FALSE}
 bleachingdata <- read_csv("bleachingdatabase.csv")
