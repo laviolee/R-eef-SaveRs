@@ -497,7 +497,7 @@ shannon_diversity <- species_observations_per_zone_year %>%
 # Plotting Shannon Diversity Index
 SD_index <- ggplot(shannon_diversity, aes(x = year, y = diversity, color = reef_zone)) +
   geom_line() +
-  labs(title = "Shannon Diversity Index Over Years by Reef Zone",
+  labs(title = "Shannon Diversity Index by Reef Zone",
        x = "Year", y = "Diversity Index") +
   theme_minimal()
 
@@ -551,7 +551,7 @@ unique_species <- unique(longer_data$species)
 models <- list()
 
 for (sp in unique_species) {
-    species_data <- longer_data[longer_data$species == sp, ]
+    species_data <- longer_data[longer_data$species == sp]
     models[[sp]] <- lmer(observation_count ~ SEVERITY_CODE + (1 | reef_zone), data = species_data)
 
     # Print the species name before printing the model summary
@@ -572,8 +572,7 @@ Conversely, Triaenodon obesus exhibits a very minimal negative effect (SEVERITY_
 model <- lmer(observation_count ~ SEVERITY_CODE + species + (1 | reef_zone), data = longer_data)
 
 summary(model)
-
-
+anova(model)
 ```
 
 ### interpretation
