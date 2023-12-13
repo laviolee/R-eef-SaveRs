@@ -4,7 +4,6 @@ author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer 
 date: "2023-12-13"
 output: html_document
 bibliography: references.bib
-runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
