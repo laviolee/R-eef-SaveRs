@@ -28,16 +28,16 @@ library(GGally)
 ```
 
 ## Introduction
-Coral reefs are one of the most magnificent and ecologically important ecosystems on the planet. They are extremely biodiverse, with 32 of the 35 known animal phyla found within them. Importantly, it is approximated that 25% of all marine life are dependent on coral reefs at some point their life cycles. Overall, coral reefs are an irreplaceable ecosystem, playing an important role in species diversity, productivity, fisheries, coastal protection, human health and livelihoods, and more.
+Coral reefs are one of the most magnificent and ecologically important ecosystems on the planet. They are extremely biodiverse, with 32 of the 35 known animal phyla found within them. Importantly, it is approximated that 25% of all marine life are dependent on coral reefs at some point in their life cycles. Overall, coral reefs are an irreplaceable ecosystem, playing an important role in species diversity, productivity, fisheries, coastal protection, human health and livelihoods, and more.
 
-Corals are communal organisms, composed of a colony of polyps. They have also evolved a mutualistic, symbiotic relationship with zooxanthellae which give corals their distinct colors. Corals provide environmental protection and compounds necessary for photosynthesis (carbon dioxide and ammonium) to zooxanthellae, while zooxanthellae provide glucose, glycerol, oxygen, and amino acids for corals. This relationship is quite sensitive and is unfortunately under threat due to a multitude of stressors. In particular, bleaching is affecting coral reefs across the globe. When reefs experience increased light and higher water temperature, zooxanthellae produce charged oxygen molecules (O-). Unfortunately, these charged oxygen molecules are toxic to corals which leads them to expel their zooxanthellae. While corals can survive a bleaching event, they are under more stress without their symbiotic partners and are subject to increased mortality. Collapse of the coral reefs puts the entire ecosystem at risk.
+Corals are communal organisms, composed of a colony of polyps. They have also evolved a mutualistic, symbiotic relationship with zooxanthellae which give corals their distinct colors. Corals provide environmental protection and compounds necessary for photosynthesis, such as carbon dioxide and ammonium, to zooxanthellae, while zooxanthellae provide glucose, glycerol, oxygen, and amino acids for corals. This relationship is quite sensitive and is unfortunately under threat due to a multitude of stressors. In particular, bleaching is affecting coral reefs across the globe. When reefs experience increased light and higher water temperature, zooxanthellae produce charged oxygen molecules (O-). Unfortunately, these charged oxygen molecules are toxic to corals which leads them to expel their zooxanthellae. While corals can survive a bleaching event, they are under more stress without their symbiotic partners and are subject to increased mortality. Collapse of the coral reefs puts the entire ecosystem at risk.
 
 Previous research by @berkelmans1999large found that the Great Barrier Reef in Australia experienced its greatest coral bleaching event in 1998. Aerial studies found that 87% of inshore reefs were bleached at least to some extent (>1% of coral cover). 67% had high levels of bleaching (>10% of coral) and 25% of isnhore reefs had extreme levels of bleaching (>60% of coral). Here we find concrete evidence that global change is impacting coral reefs, acting swiftly and intensely. Another study by @pratchett2011changes directly linked this bleaching event with changes in reef biodiversity, finding a relationship between decreased reef health and declining fish species abundance. We hope to look at the long term affects of this event as well as any additional bleaching occurring from 2000 to 2023.
 
 Our analysis seeks to analyze the affect of coral reef health, measured by amount of bleaching, on species abundance and occurrence, used as a proxy for ecosystem biodiversity. Biodiversity is essential for the processes that support life on Earth, so we find it to be an important measurement, especially in such a key marine ecosystem. We hope our findings can be used to institute effective and adaptive management strategies and policies to protect coral reefs. Details on the chosen area of study and selected species can be found below.
 
 ## Methodology
-- Coral Reef Health Data: Sourced from comprehensive databases, this data includes information on coral bleaching events, severity codes, and geographical locations within the reef.
+- Coral Reef Health Data: Sourced from comprehensive databases (@donner2017new), this data includes information on coral bleaching events, severity codes, and geographical locations within the reef.
 - Fish Occurrence Data: Accessed using the rgbif package, this data represents observations of various marine species within Australian waters, focusing on the Great Barrier Reef.
 Data Processing
 - The data was filtered, processed, and categorized into different time ranges (1980-1990, 1991-2000, 2001-2010).
@@ -335,39 +335,6 @@ obs_count_year_spec <- ggplot(species_observations_per_zone_year, aes(x = year, 
        color = "Reef Zone") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis labels for better readability
 
-```
-
-## Interactive Dashboard of Species Observations with Shiny
-
-```{r vis3, include=FALSE}
-library(shiny)
-ui <- fluidPage(
-  titlePanel("Coral Reef Analysis Dashboard"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("species", "Choose a Species:", choices = unique(species_observations_per_zone_year$species)),
-      sliderInput("yearRange", "Select Year Range:", 
-                  min = min(species_observations_per_zone_year$year), 
-                  max = max(species_observations_per_zone_year$year),
-                  value = c(min(species_observations_per_zone_year$year), max(species_observations_per_zone_year$year)))
-    ),
-    mainPanel(plotOutput("plot"))
-  )
-)
-server <- function(input, output) {
-  output$plot <- renderPlot({
-    filtered_data <- species_observations_per_zone_year %>%
-      filter(species == input$species, year >= input$yearRange[1], year <= input$yearRange[2])
-    ggplot(filtered_data, aes(x = year, y = observation_count)) +
-      geom_line() +
-      labs(title = paste("Observations of", input$species),
-           x = "Year", y = "Observation Count")
-  })
-}
-```
-
-```{r int, include=TRUE}
-shinyApp(ui = ui, server = server)
 ```
 
 ```{r severity2, include=FALSE}
