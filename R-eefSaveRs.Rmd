@@ -292,37 +292,6 @@ map_2001_2010
 ```
 
 
-```{r severity2, include=FALSE}
-library(dplyr)
-library(ggplot2)
-
-# Calculate the average SEVERITY_CODE values for each year and each reef_zone
-severity_code_by_year_zone <- reef_data %>%
-  group_by(YEAR, reef_zone) %>%
-  summarise(
-    avg_severity = mean(SEVERITY_CODE, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Plotting the average severity codes for each year, separated by reef_zone
-avg_sev_per_year <- ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_severity, group = reef_zone, color = reef_zone)) +
-  geom_line() +  # Add line to connect the dots
-  geom_point() +  # Add points for each data point
-  facet_wrap(~ reef_zone, scales = "free_y") +  # Separate graph for each reef_zone
-  theme_minimal() +
-  labs(title = "Average Severity Codes Over the Years by Reef Zone",
-       x = "Year",
-       y = "Average Severity Code") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
-
-```
-
-```{r avg sev, include=TRUE}
-avg_sev_per_year
-```
-
-##### Figure 1
-This figure shows the average severity code for each reef zone. A severity code of 3 is the most severe with 0 meaning there was no bleaching at the site. A level of -1 represents an unknown percent of bleached coral.
 
 ```{r zoning species, include=FALSE}
 # Assuming zone_boundary_1 and zone_boundary_2 are already defined
@@ -368,6 +337,72 @@ obs_count_year_spec <- ggplot(species_observations_per_zone_year, aes(x = year, 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis labels for better readability
 
 ```
+
+## Interactive Dashboard of Species Observations with Shiny
+
+```{r vis3, include=FALSE}
+library(shiny)
+ui <- fluidPage(
+  titlePanel("Coral Reef Analysis Dashboard"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("species", "Choose a Species:", choices = unique(species_observations_per_zone_year$species)),
+      sliderInput("yearRange", "Select Year Range:", 
+                  min = min(species_observations_per_zone_year$year), 
+                  max = max(species_observations_per_zone_year$year),
+                  value = c(min(species_observations_per_zone_year$year), max(species_observations_per_zone_year$year)))
+    ),
+    mainPanel(plotOutput("plot"))
+  )
+)
+server <- function(input, output) {
+  output$plot <- renderPlot({
+    filtered_data <- species_observations_per_zone_year %>%
+      filter(species == input$species, year >= input$yearRange[1], year <= input$yearRange[2])
+    ggplot(filtered_data, aes(x = year, y = observation_count)) +
+      geom_line() +
+      labs(title = paste("Observations of", input$species),
+           x = "Year", y = "Observation Count")
+  })
+}
+```
+
+```{r int, include=TRUE}
+shinyApp(ui = ui, server = server)
+```
+
+```{r severity2, include=FALSE}
+library(dplyr)
+library(ggplot2)
+
+# Calculate the average SEVERITY_CODE values for each year and each reef_zone
+severity_code_by_year_zone <- reef_data %>%
+  group_by(YEAR, reef_zone) %>%
+  summarise(
+    avg_severity = mean(SEVERITY_CODE, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Plotting the average severity codes for each year, separated by reef_zone
+avg_sev_per_year <- ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_severity, group = reef_zone, color = reef_zone)) +
+  geom_line() +  # Add line to connect the dots
+  geom_point() +  # Add points for each data point
+  facet_wrap(~ reef_zone, scales = "free_y") +  # Separate graph for each reef_zone
+  theme_minimal() +
+  labs(title = "Average Severity Codes Over the Years by Reef Zone",
+       x = "Year",
+       y = "Average Severity Code") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+
+```
+
+```{r avg sev, include=TRUE}
+avg_sev_per_year
+```
+
+##### Figure 1
+This figure shows the average severity code for each reef zone. A severity code of 3 is the most severe with 0 meaning there was no bleaching at the site. A level of -1 represents an unknown percent of bleached coral.
+
 
 ### Observation Count vs. Year for Each Species
 
@@ -544,6 +579,7 @@ The linear mixed-effects models demonstrate varied relationships between observa
 
 Conversely, Triaenodon obesus exhibits a very minimal negative effect (SEVERITY_CODE estimate: -0.005411) with a singular fit in the model, suggesting potential model fitting issues or lack of data variation. Tridacna gigas shows a moderate negative relationship (SEVERITY_CODE estimate: -0.07546) with relatively low variability across reef zones (reef_zone variance: 0.008205). These species-specific findings highlight the complexity of ecological dynamics within coral reef ecosystems. The variability in response to environmental severity underscores the need for nuanced, species-specific analyses in marine biodiversity studies, considering the distinct ecological roles and sensitivities of different species within reef environments.
 
+
 ### Including Species as a Fixed Effect
 ```{r species fixed, include=TRUE, echo=FALSE}
 model <- lmer(observation_count ~ SEVERITY_CODE + species + (1 | reef_zone), data = longer_data)
@@ -590,13 +626,35 @@ sev_obs <- ggplot(new_data, aes(x = SEVERITY_CODE, y = predicted_count, color = 
 sev_obs
 ```
 
+## ANOVA Analysis
+
+```{r anova, include=TRUE}
+library(lmerTest)
+
+# Loop through each model and perform ANOVA
+for (species in names(models)) {
+  cat("\nPerforming ANOVA for Species:", species, "\n")
+  
+  # Perform ANOVA on the model using lmerTest
+  anova_result <- anova(models[[species]])
+  
+  # Calculate the p-value from the F-value and degrees of freedom
+  p_value <- 1 - pf(anova_result$`F value`, anova_result$`npar`, anova_result$`npar`)
+  
+  # Print the ANOVA result with p-values
+  cat("P-value:", p_value, "\n")
+}
+
+```
+
+
 ## Discussion
-The findings of this project illustrate the intricate interplay between environmental severity and marine biodiversity. The differential impact on various species underscores the complexity of coral reef ecosystems and the need for tailored conservation approaches. The spatial analysis across different reef zones emphasizes the importance of considering geographical variability in reef health. Overall, this study contributes valuable insights into the resilience and vulnerability of coral reefs, informing future conservation efforts.
+This study's findings provide a nuanced perspective on the relationship between environmental severity and marine biodiversity in coral reef ecosystems. Utilizing ANOVA to assess various species models, including Abudefduf vaigiensis, Cephalopholis miniata, Chaetodon rainfordi, Chlorurus sordidus, Triaenodon obesus, and Tridacna gigas, the research identified distinct responses among species. However, the p-values, which ranged from 0.1101832 to 0.6900801, indicate that these differences are not statistically significant. This lack of significance suggests a more complex interplay between environmental factors and species responses than initially hypothesized. This complexity further underscores the intricacy of coral reef ecosystems and signals the need for more in-depth investigation to inform effective conservation strategies. The study also emphasizes the importance of considering geographical variability in reef health assessments. Overall, while the study does not find statistically significant impacts of environmental severity on specific species, it provides critical insights into the potential resilience and vulnerability of coral reefs, underscoring the need for comprehensive and nuanced approaches in future conservation efforts.
 
 ## Author Contributions
 - Jonah: wrote the code for analysis of reef_data and combined_data and created the visualizations
 - Elisabeth: 
-- Elizabeth:
+- Elizabeth: wrote the intro and species descriptions
 - Lauren:
 - Katie: helped to gather data and provided interpretations of some models and results
 
