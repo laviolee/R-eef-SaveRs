@@ -451,63 +451,6 @@ heatmap
 ##### Figure 4
 Species observation ratio as explained in Fig. 3 is mapped against year to show the general observation trends of each species across all study sites.
 
-### Interactive Dashboard of Species Observations with Shiny
-
-```{r vis3, include=FALSE}
-library(shiny)
-
-ui <- fluidPage(
-  titlePanel("Coral Reef Analysis Dashboard"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("species", "Choose a Species:", choices = unique(species_observations_per_zone_year$species)),
-      sliderInput("yearRange", "Select Year Range:", 
-                  min = min(species_observations_per_zone_year$year), 
-                  max = max(species_observations_per_zone_year$year),
-                  value = c(min(species_observations_per_zone_year$year), max(species_observations_per_zone_year$year)))
-    ),
-    mainPanel(plotOutput("plot"))
-  )
-)
-
-server <- function(input, output) {
-  output$plot <- renderPlot({
-    filtered_data <- species_observations_per_zone_year %>%
-      filter(species == input$species, year >= input$yearRange[1], year <= input$yearRange[2])
-    ggplot(filtered_data, aes(x = year, y = observation_count)) +
-      geom_line() +
-      labs(title = paste("Observations of", input$species),
-           x = "Year", y = "Observation Count")
-  })
-}
-```
-
-```{r int, include=TRUE}
-shinyApp(ui = ui, server = server)
-
-```
-
-### Shannon Index
-
-```{r vis4, include=FALSE}
-# Calculate Shannon Diversity Index
-shannon_diversity <- species_observations_per_zone_year %>%
-  group_by(reef_zone, year) %>%
-  summarise(diversity = -sum((observation_count / sum(observation_count)) * log(observation_count / sum(observation_count))))
-
-# Plotting Shannon Diversity Index
-SD_index <- ggplot(shannon_diversity, aes(x = year, y = diversity, color = reef_zone)) +
-  geom_line() +
-  labs(title = "Shannon Diversity Index by Reef Zone",
-       x = "Year", y = "Diversity Index") +
-  theme_minimal()
-
-```
-
-```{r SD, include=TRUE}
-SD_index
-```
-
 ### Multivariate Analysis (PCA)
 
 ```{r vis6, include=FALSE}
@@ -533,7 +476,6 @@ PCA_plot <- ggplot(pca_scores, aes(x = PC1, y = PC2, color = species)) +
        y = "Principal Component 2") +
   theme_minimal() +
   scale_color_viridis_d()
-
 
 ```
 
