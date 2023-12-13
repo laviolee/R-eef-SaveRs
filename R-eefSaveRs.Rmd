@@ -91,7 +91,7 @@ species_info <- data.frame(
 
 ```
 
-# Species Included in this Study
+## Species Included in this Study
 ```{r spec, include=TRUE}
 print(species_info)
 ```
@@ -201,7 +201,7 @@ reef_map <- reef_map %>%
                    popup = ~paste("Zone:", reef_zone))
 ```
 
-# Area of Study and Zones Identified (Zone A = Blue, Zone B = Yellow, Zone C = Purple)
+## Area of Study and Zones Identified (Zone A = Blue, Zone B = Yellow, Zone C = Purple)
 ```{r reef_map, include=TRUE}
 # Print the map
 reef_map
@@ -241,21 +241,22 @@ map_1980_1990 <- create_map(data_1980_1990, "1980-1990 Severity Codes")
 map_1991_2000 <- create_map(data_1991_2000, "1991-2000 Severity Codes")
 map_2001_2010 <- create_map(data_2001_2010, "2001-2010 Severity Codes")
 ```
+## Results
 
-# Progression of Bleaching Severity Over Time 
-## (Green as Least Severe and Red as Most Severe)
+### Progression of Bleaching Severity Over Time 
+##### (Green as Least Severe and Red as Most Severe)
 
-## Severity (1980-1990)
+#### Severity (1980-1990)
 ```{r map1, include=TRUE}
 map_1980_1990
 ```
 
-## Severity (1991-2000)
+#### Severity (1991-2000)
 ```{r map2, include=TRUE}
 map_1991_2000
 ```
 
-## Severity (2001-2010)
+#### Severity (2001-2010)
 ```{r map13, include=TRUE}
 map_2001_2010
 ```
@@ -289,7 +290,7 @@ avg_sev_per_year <- ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_sev
 ```{r avg sev, include=TRUE}
 avg_sev_per_year
 ```
-### Figure 1
+##### Figure 1
 This figure shows the average severity code for each reef zone. A severity code of 3 is the most severe with 0 meaning there was no bleaching at the site. A level of -1 represents an unknown percent of bleached coral.
 
 ```{r zoning species, include=FALSE}
@@ -337,12 +338,12 @@ obs_count_year_spec <- ggplot(species_observations_per_zone_year, aes(x = year, 
 
 ```
 
-## Observation Count vs. Year for Each Species
+### Observation Count vs. Year for Each Species
 
 ```{r obs_count_year_spec, include=TRUE}
 obs_count_year_spec
 ```
-### Figure 2
+##### Figure 2
 Figure 2 shows the number of observations for each species by zone. Data was unavailable for T. obesus prior to 2009. 
 
 ```{r plot 2, include=FALSE}
@@ -379,11 +380,11 @@ obs_ratio <- ggplot(species_observations_per_zone_year, aes(x = year, y = observ
 
 ```
 
-## Plotting the ratio of observation count to max observation count
+### Plotting the ratio of observation count to max observation count
 ```{r plot rat, include=TRUE}
 obs_ratio
 ```
-### Figure 3
+##### Figure 3
 These graphs compare the population levels by using the number of observations at a site per species per year divided by the maximum number of observations at each site per species over the study range.
 
 ```{r joining, eval=TRUE, include=FALSE}
@@ -432,7 +433,7 @@ longer_data <- joined_data %>%
 ```
 
 
-## Heatmap of Species Observations
+### Heatmap of Species Observations
 ```{r vis2, include=FALSE}
 # Assuming the observation_ratio column already exists in species_observations_per_zone_year
 heatmap <- ggplot(species_observations_per_zone_year, aes(x = year, y = species, fill = observation_ratio)) +
@@ -447,10 +448,10 @@ heatmap <- ggplot(species_observations_per_zone_year, aes(x = year, y = species,
 ```{r heat, include=TRUE}
 heatmap
 ```
-### Figure 4
+##### Figure 4
 Species observation ratio as explained in Fig. 3 is mapped against year to show the general observation trends of each species across all study sites.
 
-## Interactive Dashboard of Species Observations with Shiny
+### Interactive Dashboard of Species Observations with Shiny
 
 ```{r vis3, include=FALSE}
 library(shiny)
@@ -486,7 +487,7 @@ shinyApp(ui = ui, server = server)
 
 ```
 
-## Shannon Index
+### Shannon Index
 
 ```{r vis4, include=FALSE}
 # Calculate Shannon Diversity Index
@@ -507,7 +508,7 @@ SD_index <- ggplot(shannon_diversity, aes(x = year, y = diversity, color = reef_
 SD_index
 ```
 
-## Multivariate Analysis (PCA)
+### Multivariate Analysis (PCA)
 
 ```{r vis6, include=FALSE}
 
@@ -540,9 +541,9 @@ PCA_plot <- ggplot(pca_scores, aes(x = PC1, y = PC2, color = species)) +
 PCA_plot
 ```
 
-# Correlation between Severity Code and Observation Count
+## Correlation between Severity Code and Observation Count
 
-## Separate Model for each Species
+### Separate Model for each Species
 ```{r correlation, include=TRUE, echo=FALSE}
 
 library(lme4)
@@ -561,13 +562,13 @@ for (sp in unique_species) {
 
 ```
 
-### interpretation
+#### Interpretation
 
 The linear mixed-effects models demonstrate varied relationships between observation_count and SEVERITY_CODE across species, factoring in reef_zone as a random effect. For Abudefduf vaigiensis (SEVERITY_CODE estimate: -0.05199, reef_zone variance: 82.07) and Cephalopholis miniata (SEVERITY_CODE estimate: -0.0571, reef_zone variance: 6.020), there is a slight negative relationship, suggesting minor reductions in observation counts with increasing severity codes. More pronounced effects are seen in Chaetodon rainfordi (SEVERITY_CODE estimate: -2.7551, reef_zone variance: 355.7) and Chlorurus sordidus (SEVERITY_CODE estimate: -7.030, reef_zone variance: 1251), with the latter showing a substantial decrease in observation counts correlating with higher severity codes, indicating significant ecological impacts.
 
 Conversely, Triaenodon obesus exhibits a very minimal negative effect (SEVERITY_CODE estimate: -0.005411) with a singular fit in the model, suggesting potential model fitting issues or lack of data variation. Tridacna gigas shows a moderate negative relationship (SEVERITY_CODE estimate: -0.07546) with relatively low variability across reef zones (reef_zone variance: 0.008205). These species-specific findings highlight the complexity of ecological dynamics within coral reef ecosystems. The variability in response to environmental severity underscores the need for nuanced, species-specific analyses in marine biodiversity studies, considering the distinct ecological roles and sensitivities of different species within reef environments.
 
-## Including species as a Fixed Effect
+### Including Species as a Fixed Effect
 ```{r species fixed, include=TRUE, echo=FALSE}
 model <- lmer(observation_count ~ SEVERITY_CODE + species + (1 | reef_zone), data = longer_data)
 
@@ -575,14 +576,12 @@ summary(model)
 anova(model)
 ```
 
-### interpretation
+#### Interpretation
 The model, represented by the formula observation_count ~ SEVERITY_CODE + species + (1 | reef_zone), demonstrates a significant overall negative relationship between severity codes and observation counts, as indicated by the SEVERITY_CODE coefficient of -1.6958. This suggests that an increase in severity code, indicative of more severe environmental conditions, generally leads to a decrease in observation counts across all species. The model's intercept is set at 8.1568, serving as a baseline for observation counts when other variables are held constant.
 
 Species-specific variations are evident in the model, with certain species showing distinct deviations from the baseline observation counts. For example, speciesChaetodon rainfordi exhibits a substantial increase in observation counts (coefficient: 28.6941), indicating a higher number of observations compared to other species under similar environmental conditions. In contrast, speciesCephalopholis miniata shows a negative deviation from the baseline (coefficient: -4.1461), suggesting fewer observations. The random effects for reef_zone reveal a variance of 107.9, pointing to significant differences in observation counts across various reef zones, which highlights the spatial heterogeneity within reef ecosystems. These findings underscore the complex and nuanced responses of different marine species to varying environmental conditions, emphasizing the need for species-specific conservation and management strategies in coral reef ecosystems.
 
-# Visualization
-
-## Effect of Severity Code on Observation Count for Each Species:
+### Effect of Severity Code on Observation Count for Each Species:
 
 ```{r vis, include=FALSE}
 library(ggplot2)
@@ -615,11 +614,6 @@ sev_obs <- ggplot(new_data, aes(x = SEVERITY_CODE, y = predicted_count, color = 
 sev_obs
 ```
 
-## Results
-The analysis revealed varied relationships between observation counts and severity codes across different species, indicating species-specific responses to environmental changes.
-Significant differences in observation counts were observed across various reef zones, highlighting spatial heterogeneity within the reef ecosystem.
-Maps generated for different decades showed the distribution of severity codes, providing a visual representation of coral bleaching impact over time.
-
 ## Discussion
 The findings of this project illustrate the intricate interplay between environmental severity and marine biodiversity. The differential impact on various species underscores the complexity of coral reef ecosystems and the need for tailored conservation approaches. The spatial analysis across different reef zones emphasizes the importance of considering geographical variability in reef health. Overall, this study contributes valuable insights into the resilience and vulnerability of coral reefs, informing future conservation efforts.
 
@@ -628,7 +622,7 @@ Jonah:
 Elisabeth: 
 Elizabeth:
 Lauren:
-Katie: helped to gather data and provided interpretations of some models
+Katie: helped to gather data and provided interpretations of some models and results
 
 ## References
 
