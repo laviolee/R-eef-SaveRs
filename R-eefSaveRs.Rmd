@@ -1,9 +1,9 @@
 ---
 title: "Coral Reef Health and Organismal Occurrence Analysis Project"
 author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer & Katie Miller"
-date: "2023-12-06"
+date: "2023-12-13"
 output: html_document
-bibliography: BIOL3140.bib
+bibliography: references.bib
 runtime: shiny
 ---
 
@@ -29,7 +29,13 @@ library(GGally)
 ```
 
 ## Introduction
-The "Coral Reef Health and Organismal Occurrence Analysis Project" is a comprehensive study undertaken to understand the impact of environmental conditions on coral reef ecosystems and the distribution of various marine species. Led by Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer, and Katie Miller, this project focuses on analyzing coral reef health data and fish occurrence data from 1980 to 2023, with a particular emphasis on the Great Barrier Reef. The study aims to shed light on the ecological dynamics within these complex marine ecosystems, providing insights that are crucial for effective conservation and management strategies.
+Coral reefs are one of the most magnificent and ecologically important ecosystems on the planet. They are extremely biodiverse, with 32 of the 35 known animal phyla found within them. Importantly, it is approximated that 25% of all marine life are dependent on coral reefs at some point their life cycles. Overall, coral reefs are an irreplaceable ecosystem, playing an important role in species diversity, productivity, fisheries, coastal protection, human health and livelihoods, and more.
+
+Corals are communal organisms, composed of a colony of polyps. They have also evolved a mutualistic, symbiotic relationship with zooxanthellae which give corals their distinct colors. Corals provide environmental protection and compounds necessary for photosynthesis (carbon dioxide and ammonium) to zooxanthellae, while zooxanthellae provide glucose, glycerol, oxygen, and amino acids for corals. This relationship is quite sensitive and is unfortunately under threat due to a multitude of stressors. In particular, bleaching is affecting coral reefs across the globe. When reefs experience increased light and higher water temperature, zooxanthellae produce charged oxygen molecules (O-). Unfortunately, these charged oxygen molecules are toxic to corals which leads them to expel their zooxanthellae. While corals can survive a bleaching event, they are under more stress without their symbiotic partners and are subject to increased mortality. Collapse of the coral reefs puts the entire ecosystem at risk.
+
+Previous research by @berkelmans1999large found that the Great Barrier Reef in Australia experienced its greatest coral bleaching event in 1998. Aerial studies found that 87% of inshore reefs were bleached at least to some extent (>1% of coral cover). 67% had high levels of bleaching (>10% of coral) and 25% of isnhore reefs had extreme levels of bleaching (>60% of coral). Here we find concrete evidence that global change is impacting coral reefs, acting swiftly and intensely. Another study by @pratchett2011changes directly linked this bleaching event with changes in reef biodiversity, finding a relationship between decreased reef health and declining fish species abundance. We hope to look at the long term affects of this event as well as any additional bleaching occurring from 2000 to 2023.
+
+Our analysis seeks to analyze the affect of coral reef health, measured by amount of bleaching, on species abundance and occurrence, used as a proxy for ecosystem biodiversity. Biodiversity is essential for the processes that support life on Earth, so we find it to be an important measurement, especially in such a key marine ecosystem. We hope our findings can be used to institute effective and adaptive management strategies and policies to protect coral reefs. Details on the chosen area of study and selected species can be found below.
 
 ## Methodology
 - Coral Reef Health Data: Sourced from comprehensive databases, this data includes information on coral bleaching events, severity codes, and geographical locations within the reef.
@@ -91,29 +97,53 @@ species_info <- data.frame(
 
 ```
 
+#### Areas and Species of Study
+The area we have chosen to study is the Great Barrier Reef, found off the eastern coast of Australia near Queensland. The Great Barrier Reef is the world's largest coral reef system, containing over 2,900 individual reefs and boasting over 400 types of coral as well over 9,000 known species. Additionally, the reef's popularity means that it has been well studied and recorded by researchers and citizen scientists alike. These factors make the Great Barrier Reef a perfect region of study.
+
+Below you will find descriptions on our selected species:
+
 ## Species Included in this Study
 ```{r spec, include=TRUE}
 print(species_info)
 ```
 
 ### Triaenodon obesus (Whitetip Reef Shark)
-![Whitetip Reef Shark](https://www.aquariumofpacific.org/images/olc/nwhi-sharknoaac.jpg)
+
+<img src="https://www.aquariumofpacific.org/images/olc/nwhi-sharknoaac.jpg" width="50%" style="display: block; margin: auto;">
+
+**Triaenodon obesus**, commonly known as the *Whitetip Reef Shark*, is one of the most prevalent sharks found in the reefs of the Indo-Pacific region. These sharks are notable for their reliance on reef caves as resting spots during the day. As apex predators, they play a crucial role in the reef ecosystem, preying on a variety of species.
+
 
 ### Tridacna gigas (Giant Clam)
-![Giant Clam](https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Giant_clam_or_Tridacna_gigas.jpg/520px-Giant_clam_or_Tridacna_gigas.jpg)
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Giant_clam_or_Tridacna_gigas.jpg/520px-Giant_clam_or_Tridacna_gigas.jpg" width="50%" style="display: block; margin: auto;">
+
+**Tridacna gigas**, also known as the *Giant Clam*, is one of the most endangered clam species. Native to shallow coral reefs, their immobility in adult stages makes them particularly vulnerable to environmental changes. They maintain a symbiotic relationship with zooxanthellae, deriving most of their nutrition from this algal partner.
 
 ### Chaetodon rainfordi (Rainford's Butterflyfish)
-![Rainford's Butterflyfish](https://upload.wikimedia.org/wikipedia/commons/f/f6/ChaetodRainfordiMarkMShepherd.jpg)
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/ChaetodRainfordiMarkMShepherd.jpg" width="50%" style="display: block; margin: auto;">
+
+**Chaetodon rainfordi**, or *Rainford's Butterflyfish*, is native to the southwestern Pacific Ocean, including the Great Barrier Reef. As an obligate corallivore, it feeds exclusively on coral polyps, making it a valuable indicator species for local coral health.
 
 ### Abudefduf vaigiensis (Indo-Pacific Sergeant)
-![Indo-Pacific Sergeant](https://media.australian.museum/media/dd/images/avaigiensis_big.6e7311e.width-1200.067fecd.jpg)
+
+<img src="https://media.australian.museum/media/dd/images/avaigiensis_big.6e7311e.width-1200.067fecd.jpg" width="50%" style="display: block; margin: auto;">
+
+The *Indo-Pacific Sergeant*, or **Abudefduf vaigiensis**, is a damselfish that inhabits the Indo-Pacific region. It relies on coral reefs throughout its adult life.
 
 ### Cephalopholis miniata (Coral Hind)
-![Coral Hind](https://seaunseen.com/wp-content/uploads/2016/02/MG_8098.jpg)
 
+<img src="https://seaunseen.com/wp-content/uploads/2016/02/MG_8098.jpg" width="50%" style="display: block; margin: auto;">
+
+The *Coral Grouper*, known scientifically as **Cephalopholis miniata**, prefers more exposed areas of the reef. This predatory species feeds on small fish and crustaceans.
 
 ### Chlorurus sordidus (Bullethead Parrotfish)
-![Bullethead Parrotfish](https://upload.wikimedia.org/wikipedia/commons/2/26/Chlorurus_sordidus_by_Jaroslaw_Barski.jpg)
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Chlorurus_sordidus_by_Jaroslaw_Barski.jpg" width="50%" style="display: block; margin: auto;">
+
+**Chlorurus sordidus**, or the *Daisy Parrotfish*, is found in coral reefs where it feeds on benthic algae. Parrotfish play a crucial role in maintaining reef health by scraping algae off dead coral substrates and producing sand from ingested rock and coral.
+
 
 ```{r coral bleaching data, echo=FALSE, cache = TRUE, include=FALSE}
 bleachingdata <- read_csv("bleachingdatabase.csv")
@@ -290,6 +320,7 @@ avg_sev_per_year <- ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_sev
 ```{r avg sev, include=TRUE}
 avg_sev_per_year
 ```
+
 ##### Figure 1
 This figure shows the average severity code for each reef zone. A severity code of 3 is the most severe with 0 meaning there was no bleaching at the site. A level of -1 represents an unknown percent of bleached coral.
 
@@ -343,6 +374,7 @@ obs_count_year_spec <- ggplot(species_observations_per_zone_year, aes(x = year, 
 ```{r obs_count_year_spec, include=TRUE}
 obs_count_year_spec
 ```
+
 ##### Figure 2
 Figure 2 shows the number of observations for each species by zone. Data was unavailable for T. obesus prior to 2009. 
 
@@ -384,6 +416,7 @@ obs_ratio <- ggplot(species_observations_per_zone_year, aes(x = year, y = observ
 ```{r plot rat, include=TRUE}
 obs_ratio
 ```
+
 ##### Figure 3
 These graphs compare the population levels by using the number of observations at a site per species per year divided by the maximum number of observations at each site per species over the study range.
 
@@ -448,6 +481,7 @@ heatmap <- ggplot(species_observations_per_zone_year, aes(x = year, y = species,
 ```{r heat, include=TRUE}
 heatmap
 ```
+
 ##### Figure 4
 Species observation ratio as explained in Fig. 3 is mapped against year to show the general observation trends of each species across all study sites.
 
@@ -494,7 +528,7 @@ unique_species <- unique(longer_data$species)
 models <- list()
 
 for (sp in unique_species) {
-    species_data <- longer_data[longer_data$species == sp]
+    species_data <- longer_data[longer_data$species == sp,]
     models[[sp]] <- lmer(observation_count ~ SEVERITY_CODE + (1 | reef_zone), data = species_data)
 
     # Print the species name before printing the model summary
@@ -560,12 +594,11 @@ sev_obs
 The findings of this project illustrate the intricate interplay between environmental severity and marine biodiversity. The differential impact on various species underscores the complexity of coral reef ecosystems and the need for tailored conservation approaches. The spatial analysis across different reef zones emphasizes the importance of considering geographical variability in reef health. Overall, this study contributes valuable insights into the resilience and vulnerability of coral reefs, informing future conservation efforts.
 
 ## Author Contributions
-Jonah: 
-Elisabeth: 
-Elizabeth:
-Lauren:
-Katie: helped to gather data and provided interpretations of some models and results
+- Jonah: wrote the code for analysis of reef_data and combined_data and created the visualizations
+- Elisabeth: 
+- Elizabeth:
+- Lauren:
+- Katie: helped to gather data and provided interpretations of some models and results
 
 ## References
-
 
