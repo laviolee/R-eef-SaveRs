@@ -1,9 +1,9 @@
 ---
 title: "Coral Reef Health and Organismal Occurrence Analysis Project"
-author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer & Katie Miller"
+author: "Jonah Kotzen, Elisabeth Laviolette, Lauren Geary, Elizabeth Breitmeyer, & Katie Miller"
 date: "2023-12-13"
 output: html_document
-bibliography: references.bib
+bibliography: BIOL3140.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -37,7 +37,7 @@ Previous research by @berkelmans1999large found that the Great Barrier Reef in A
 Our analysis seeks to analyze the affect of coral reef health, measured by amount of bleaching, on species abundance and occurrence, used as a proxy for ecosystem biodiversity. Biodiversity is essential for the processes that support life on Earth, so we find it to be an important measurement, especially in such a key marine ecosystem. We hope our findings can be used to institute effective and adaptive management strategies and policies to protect coral reefs. Details on the chosen area of study and selected species can be found below.
 
 ## Methodology
-- Coral Reef Health Data: Sourced from comprehensive databases (@donner2017new), this data includes information on coral bleaching events, severity codes, and geographical locations within the reef.
+- Coral Reef Health Data: Sourced from comprehensive databases @donner2017new, this data includes information on coral bleaching events, severity codes, and geographical locations within the reef.
 - Fish Occurrence Data: Accessed using the rgbif package, this data represents observations of various marine species within Australian waters, focusing on the Great Barrier Reef.
 Data Processing
 - The data was filtered, processed, and categorized into different time ranges (1980-1990, 1991-2000, 2001-2010).
@@ -63,7 +63,7 @@ for (sp in species) {
 
 ```
 
-```{r data rds, include=TRUE}
+```{r data rds, echo=FALSE, include=TRUE}
 data_list <- readRDS(file = "data_list.rds")
 
 ```
@@ -102,7 +102,7 @@ The area we have chosen to study is the Great Barrier Reef, found off the easter
 Below you will find descriptions on our selected species:
 
 ## Species Included in this Study
-```{r spec, include=TRUE}
+```{r spec, echo=FALSE, include=TRUE}
 print(species_info)
 ```
 
@@ -120,7 +120,6 @@ print(species_info)
 **Tridacna gigas**, also known as the *Giant Clam*, is one of the most endangered clam species. Native to shallow coral reefs, their immobility in adult stages makes them particularly vulnerable to environmental changes. They maintain a symbiotic relationship with zooxanthellae, deriving most of their nutrition from this algal partner.
 
 ### Chaetodon rainfordi (Rainford's Butterflyfish)
-
 <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/ChaetodRainfordiMarkMShepherd.jpg" width="50%" style="display: block; margin: auto;">
 
 **Chaetodon rainfordi**, or *Rainford's Butterflyfish*, is native to the southwestern Pacific Ocean, including the Great Barrier Reef. As an obligate corallivore, it feeds exclusively on coral polyps, making it a valuable indicator species for local coral health.
@@ -231,7 +230,7 @@ reef_map <- reef_map %>%
 ```
 
 ## Area of Study and Zones Identified (Zone A = Blue, Zone B = Yellow, Zone C = Purple)
-```{r reef_map, include=TRUE}
+```{r reef_map, echo=FALSE, include=TRUE}
 # Print the map
 reef_map
 
@@ -276,17 +275,17 @@ map_2001_2010 <- create_map(data_2001_2010, "2001-2010 Severity Codes")
 ##### (Green as Least Severe and Red as Most Severe)
 
 #### Severity (1980-1990)
-```{r map1, include=TRUE}
+```{r map1, echo=FALSE, include=TRUE}
 map_1980_1990
 ```
 
 #### Severity (1991-2000)
-```{r map2, include=TRUE}
+```{r map2, echo=FALSE, include=TRUE}
 map_1991_2000
 ```
 
 #### Severity (2001-2010)
-```{r map13, include=TRUE}
+```{r map13, echo=FALSE, include=TRUE}
 map_2001_2010
 ```
 
@@ -362,7 +361,7 @@ avg_sev_per_year <- ggplot(severity_code_by_year_zone, aes(x = YEAR, y = avg_sev
 
 ```
 
-```{r avg sev, include=TRUE}
+```{r avg sev, echo=FALSE, include=TRUE}
 avg_sev_per_year
 ```
 
@@ -372,7 +371,7 @@ This figure shows the average severity code for each reef zone. A severity code 
 
 ### Observation Count vs. Year for Each Species
 
-```{r obs_count_year_spec, include=TRUE}
+```{r obs_count_year_spec, echo=FALSE, include=TRUE}
 obs_count_year_spec
 ```
 
@@ -414,7 +413,7 @@ obs_ratio <- ggplot(species_observations_per_zone_year, aes(x = year, y = observ
 ```
 
 ### Plotting the ratio of observation count to max observation count
-```{r plot rat, include=TRUE}
+```{r plot rat, echo=FALSE, include=TRUE}
 obs_ratio
 ```
 
@@ -479,7 +478,7 @@ heatmap <- ggplot(species_observations_per_zone_year, aes(x = year, y = species,
 
 ```
 
-```{r heat, include=TRUE}
+```{r heat, echo=FALSE, include=TRUE}
 heatmap
 ```
 
@@ -514,7 +513,7 @@ PCA_plot <- ggplot(pca_scores, aes(x = PC1, y = PC2, color = species)) +
 
 ```
 
-```{r PCA, include=TRUE}
+```{r PCA, echo=FALSE, include=TRUE}
 PCA_plot
 ```
 
@@ -588,15 +587,17 @@ sev_obs <- ggplot(new_data, aes(x = SEVERITY_CODE, y = predicted_count, color = 
 
 ```
 
-```{r sev_obs, include=TRUE}
+```{r sev_obs, echo=FALSE, include=TRUE}
 sev_obs
 ```
 
 ## ANOVA Analysis
 
-```{r anova, include=TRUE}
+```{r anova setup, echo=FALSE, include=TRUE}
 library(lmerTest)
+```
 
+```{r anova, echo=FALSE, include=TRUE}
 # Loop through each model and perform ANOVA
 for (species in names(models)) {
   cat("\nPerforming ANOVA for Species:", species, "\n")
@@ -610,7 +611,6 @@ for (species in names(models)) {
   # Print the ANOVA result with p-values
   cat("P-value:", p_value, "\n")
 }
-
 ```
 
 
@@ -619,9 +619,9 @@ This study's findings provide a nuanced perspective on the relationship between 
 
 ## Author Contributions
 - Jonah: wrote the code for analysis of reef_data and combined_data and created the visualizations
-- Elisabeth: 
+- Elisabeth: located and inserted coral reef data and created the bibliography 
 - Elizabeth: wrote the intro and species descriptions
-- Lauren:
+- Lauren: helped troubleshoot which variables to analyze and overlooked final HTML formatting
 - Katie: helped to gather data and provided interpretations of some models and results
 
 ## References
