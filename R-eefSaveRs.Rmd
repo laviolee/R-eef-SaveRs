@@ -120,7 +120,8 @@ print(species_info)
 **Tridacna gigas**, also known as the *Giant Clam*, is one of the most endangered clam species. Native to shallow coral reefs, their immobility in adult stages makes them particularly vulnerable to environmental changes. They maintain a symbiotic relationship with zooxanthellae, deriving most of their nutrition from this algal partner.
 
 ### Chaetodon rainfordi (Rainford's Butterflyfish)
-<img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/ChaetodRainfordiMarkMShepherd.jpg" width="50%" style="display: block; margin: auto;">
+
+<img src="https://media.australian.museum/media/dd/images/rainfords_butterflyfish_475.a21d6bc.width-800.7836ea6.jpg" width="50%" style="display: block; margin: auto;">
 
 **Chaetodon rainfordi**, or *Rainford's Butterflyfish*, is native to the southwestern Pacific Ocean, including the Great Barrier Reef. As an obligate corallivore, it feeds exclusively on coral polyps, making it a valuable indicator species for local coral health.
 
@@ -138,7 +139,7 @@ The *Coral Grouper*, known scientifically as **Cephalopholis miniata**, prefers 
 
 ### Chlorurus sordidus (Bullethead Parrotfish)
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Chlorurus_sordidus_by_Jaroslaw_Barski.jpg" width="50%" style="display: block; margin: auto;">
+<img src="https://s3.amazonaws.com/media.jungledragon.com/images/2298/139768_small.jpg?AWSAccessKeyId=05GMT0V3GWVNE7GGM1R2&Expires=1703721610&Signature=AFRMraWtAxavhw2vDVMWNW%2FYv6Q%3D" width="50%" style="display: block; margin: auto;">
 
 **Chlorurus sordidus**, or the *Daisy Parrotfish*, is found in coral reefs where it feeds on benthic algae. Parrotfish play a crucial role in maintaining reef health by scraping algae off dead coral substrates and producing sand from ingested rock and coral.
 
